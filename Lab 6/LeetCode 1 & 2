@@ -1,0 +1,63 @@
+//Problem1
+
+struct ListNode* deleteDuplicates(struct ListNode* head) {
+    if (head == NULL) {
+        return NULL;  // If the list is empty, return NULL
+    }
+
+    struct ListNode *ptr = head;  // Initialize pointer to head
+
+    // Traverse the list while there's a next node
+    while (ptr != NULL && ptr->next != NULL) {
+        // If current node value equals the next node's value, remove the next node
+        if (ptr->val == ptr->next->val) {
+            struct ListNode *temp = ptr->next;
+            ptr->next = ptr->next->next;  // Skip the duplicate node
+            free(temp);  // Free the memory of the removed node
+        } else {
+            // Move to the next node if no duplicate is found
+            ptr = ptr->next;
+        }
+    }
+
+    return head;
+}
+
+//Problem2
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     struct ListNode *next;
+ * };
+ */
+bool isPalindrome(struct ListNode* head) {
+    int arr[10000];  // You can adjust this if needed, but ideally should be dynamic
+    int i = 0, count = 0;
+    struct ListNode* ptr = head;
+
+    // Step 1: Store list values in arr[] and count the length
+    while(ptr != NULL) {
+        arr[i] = ptr->val;
+        ptr = ptr->next;
+        i++;
+        count++;
+    }
+
+    // Step 2: Reverse the array values into arr2[]
+    int arr2[10000];
+    for(i = 0; i < count; i++) {
+        arr2[i] = arr[count - 1 - i];
+    }
+
+    // Step 3: Compare arr[] and arr2[]
+    for(i = 0; i < count; i++) {
+        if(arr[i] != arr2[i]) {
+            return false;  // Return false if any mismatch is found
+        }
+    }
+
+    // Step 4: Return true if all elements match
+    return true;
+}
