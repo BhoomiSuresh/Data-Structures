@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<conio.h>
+
+struct Node{
+    int data;
+    struct node *next;
+};
+
+void push(struct Node* head, int new_data)
+{
+struct Node* new_node = (struct Node*) malloc(sizeof(struct Node));
+new_node->data = new_data;
+new_node->next = (head);
+(head) = new_node;
+}
+void pop(struct Node* head)
+{
+struct Node *ptr;
+if(head == NULL)
+{
+printf("\nList is empty");
+}
+else
+{
+ptr = head;
+head = ptr->next;
+free(ptr);
+printf("\n Node deleted from the begining ...");
+}
+}
+
+void main(){
+   struct Node *head = NULL;
+   push(head, 30);
+   push(head, 30);
+   push(head, 30);
+   push(head, 30);
+   push(head, 30);
+   pop(head);
+}
