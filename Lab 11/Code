@@ -1,0 +1,111 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_KEYS 100
+#define MAX_EMPLOYEES 100
+#define MAX_HASH_TABLE_SIZE 100
+
+// Structure to represent an employee record
+struct Employee {
+    int key;
+    char name[50];
+};
+
+// Structure to represent a hash table entry
+struct HashTableEntry {
+    int key;
+    struct Employee* employee;
+};
+
+// Function to hash a key using the remainder method
+int hash(int key, int m) {
+    return key % m; 
+}
+
+// Function to create a hash table
+struct HashTableEntry* createHashTable(int m) {
+    struct HashTableEntry* hashTable = (struct HashTableEntry*)malloc(m * sizeof(struct HashTableEntry));
+    for (int i = 0; i < m; i++) {
+        hashTable[i].key = -1; // Initialize with an invalid key
+        hashTable[i].employee = NULL;
+    }
+    return hashTable;
+}
+
+// Function to insert an employee record into the hash table
+void insert(struct HashTableEntry* hashTable, int m, struct Employee* employee) {
+    int index = hash(employee->key, m);
+
+    // Handle collisions using linear probing
+    while (hashTable[index].key != -1) {
+        index = (index + 1) % m; // Move to the next slot
+    }
+
+    hashTable[index].key = employee->key;
+    hashTable[index].employee = employee;
+}
+
+// Function to search for an employee record in the hash table
+struct Employee* search(struct HashTableEntry* hashTable, int m, int key) {
+    int index = hash(key, m);
+
+    // Handle collisions using linear probing
+    while (hashTable[index].key != -1 && hashTable[index].key != key) {
+        index = (index + 1) % m;
+    }
+
+    if (hashTable[index].key == key) {
+        return hashTable[index].employee;
+    } else {
+        return NULL; // Employee not found
+    }
+}
+
+// Function to display the contents of the hash table
+void displayHashTable(struct HashTableEntry* hashTable, int m) {
+    printf("Hash Table:\n");
+    for (int i = 0; i < m; i++) {
+        printf("Index %d: ", i);
+        if (hashTable[i].key != -1) {
+            printf("Key: %d, Name: %s\n", hashTable[i].key, hashTable[i].employee->name);
+        } else {
+            printf("Empty\n");
+        }
+    }
+}
+
+int main() {
+    int m = 10; // Size of the hash table
+    struct HashTableEntry* hashTable = createHashTable(m);
+
+    // Create and populate employee records
+    struct Employee employees[MAX_EMPLOYEES];
+    strcpy(employees[0].name, "Alice");
+    employees[0].key = 1234;
+    strcpy(employees[1].name, "Bob");
+    employees[1].key = 5678;
+    // ... (Add more employee records)
+
+    // Insert employee records into the hash table
+    for (int i = 0; i < 2; i++) { // Insert the first two employees
+        insert(hashTable, m, &employees[i]);
+    }
+
+    // Search for an employee record
+    int searchKey = 1234; // Key of the employee to search
+    struct Employee* foundEmployee = search(hashTable, m, searchKey);
+    if (foundEmployee != NULL) {
+        printf("Employee found: Key: %d, Name: %s\n", foundEmployee->key, foundEmployee->name);
+    } else {
+        printf("Employee not found.\n");
+    }
+
+    // Display the contents of the hash table
+    displayHashTable(hashTable, m);
+
+    // Free allocated memory for the hash table
+    free(hashTable);
+
+    return 0;
+}
